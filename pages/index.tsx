@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import SensorChart from "../src/SensorChart";
-import { temperatureData } from "../src/Data";
 import { createStyles, withStyles, WithStyles } from "@material-ui/core";
 import theme from "../src/theme";
 import useSWR from "swr";
@@ -37,7 +36,7 @@ const Index: React.FunctionComponent<WithStyles<typeof styles>> = (props) => {
   console.log(stateData);
   return (
     <div className={props.classes.root}>
-      <SensorChart data={stateData} legend="Deaths" />
+      <SensorChart data={stateData} legend="Deaths" stateCode={stateCode} />
     </div>
   );
 };

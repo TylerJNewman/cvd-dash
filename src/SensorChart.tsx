@@ -34,13 +34,13 @@ const styles = (theme: Theme) =>
       backgroundColor: "white",
       border: "2px solid " + theme.palette.primary.main,
       borderRadius: theme.spacing(2),
-      padding: theme.spacing(2),
+      padding: theme.spacing(2, 3),
       fontFamily: "Helvetica",
       fontSize: 12,
       color: theme.palette.primary.main,
       fontWeight: "bold",
       boxShadow: "0px 5px 15px rgba(0,0,0,0.1)",
-      marginBottom: theme.spacing(2),
+      paddingTop: theme.spacing(3),
     },
   });
 
@@ -54,7 +54,7 @@ interface PlotProps extends WithStyles<typeof styles> {
 }
 
 const SensorChart: React.FunctionComponent<PlotProps> = (props) => {
-  const { classes } = props;
+  const { classes, legend, stateCode } = props;
   const theme = useTheme();
   const [hover, setHover] = useState<boolean>(false);
   const [series, setSeries] = useState<Serie[]>([]);
@@ -129,24 +129,11 @@ const SensorChart: React.FunctionComponent<PlotProps> = (props) => {
   }, [minY, maxY]);
 
   let margin = {
-    top: 10,
+    top: 30,
     right: 10,
     bottom: 50,
     left: 40,
   };
-
-  // const axisLeft: AxisProps = {
-  //   legend: props.legend,
-  //   legendOffset: -32,
-  //   legendPosition: "middle",
-  //   tickSize: 0,
-  //   tickValues: 2,
-  //   tickPadding: 4,
-  // };
-
-  // const toolTipelement = (props: PointTooltipProps) => {
-  //   return <div className={classes.toolTip}>{`${props.tooltipText}`}</div>;
-  // };
 
   return (
     <div
@@ -159,8 +146,10 @@ const SensorChart: React.FunctionComponent<PlotProps> = (props) => {
         data={series}
         theme={chartTheme()}
         colors={[hover ? light : dark]}
-        enableGridY={hover}
-        enableGridX={hover}
+        // enableGridY={hover}
+        // enableGridX={hover}
+        // enableGridY={false}
+        // enableGridX={false}
         margin={margin}
         yScale={yScale()}
         xScale={{ type: "point" }}
@@ -170,8 +159,9 @@ const SensorChart: React.FunctionComponent<PlotProps> = (props) => {
           tickPadding: 5,
           tickRotation: 90,
           format: (values) => `${getRequiredDateFormat(values, "MMMM-DD")}`,
-          legendOffset: 36,
-          legendPosition: "middle",
+          legendOffset: -260,
+          legend: `${legend} - ${stateCode}`,
+          legendPosition: "left",
         }}
         axisLeft={{
           orient: "left",
@@ -184,17 +174,14 @@ const SensorChart: React.FunctionComponent<PlotProps> = (props) => {
         // pointSize={0}
         useMesh={true}
         crosshairType="cross"
+        // enableCrosshair={false}
         tooltip={({ point }) => {
           console.log("point", point);
           return (
-            <div
-              style={{
-                background: "white",
-                padding: "9px 12px",
-                border: "1px solid #ccc",
-              }}
-            >
-              <div>date: {getRequiredDateFormat(point.data.x, "MMMM-DD")}</div>
+            <div className={classes.toolTip}>
+              <div style={{ textAlign: "center" }}>
+                {getRequiredDateFormat(point.data.x, "MMMM-DD")}
+              </div>
               <div
                 key={point.id}
                 style={{
