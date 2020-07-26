@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { PointTooltipProps, ResponsiveLine, Serie } from "@nivo/line";
+import moment from "moment";
 import {
   Theme,
   withStyles,
@@ -8,8 +9,11 @@ import {
   useTheme,
 } from "@material-ui/core";
 import { Scale } from "@nivo/scales";
-import { AxisProps } from "@nivo/axes";
 import { getStdDeviation } from "./Utils";
+
+const getRequiredDateFormat = (timeStamp, format = "MM-DD-YYYY") => {
+  return moment(timeStamp).format(format);
+};
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -17,8 +21,8 @@ const styles = (theme: Theme) =>
       padding: theme.spacing(6),
       borderRadius: theme.spacing(2),
       backgroundColor: "white",
-      width: 620,
-      height: 240,
+      width: 668,
+      height: 366,
       border: "1px solid rgba(0,0,0,0.15)",
       transition: "box-shadow 0.3s ease-in-out",
       "&:hover": {
@@ -104,23 +108,16 @@ const SensorChart: React.FunctionComponent<PlotProps> = (props) => {
   useEffect(() => {
     setSeries([
       {
-        id: "Temperature",
-        data: props.data
-          .sort((r1, r2) => r1.time - r2.time)
-          .map((reading) => {
-            return {
-              x: reading.time,
-              y: reading.value,
-            };
-          }),
+        id: "deaths",
+        data: props.data,
       },
     ]);
 
-    let yValues = props.data.map((d) => d.value);
+    let yValues = props.data.map((d) => d.y);
     let minValue = yValues.reduce((v1, v2) => (v1 > v2 ? v2 : v1));
     let maxValue = yValues.reduce((v1, v2) => (v1 > v2 ? v1 : v2));
-    setMinY(minValue - getStdDeviation(yValues));
-    setMaxY(maxValue + getStdDeviation(yValues));
+    setMinY(minValue - getStdDeviation(yValues) / 3);
+    setMaxY(maxValue + getStdDeviation(yValues) / 3);
   }, [props.data]);
 
   const yScale = useCallback((): Scale => {
@@ -131,36 +128,25 @@ const SensorChart: React.FunctionComponent<PlotProps> = (props) => {
     };
   }, [minY, maxY]);
 
-  const xScale: Scale = {
-    type: "time",
-    precision: "minute",
-    format: "%s",
-  };
-
   let margin = {
     top: 10,
-    right: 0,
-    bottom: 30,
+    right: 10,
+    bottom: 50,
     left: 40,
   };
 
-  const axisBottom: AxisProps = {
-    format: "%H:%M",
-    tickValues: 5,
-  };
+  // const axisLeft: AxisProps = {
+  //   legend: props.legend,
+  //   legendOffset: -32,
+  //   legendPosition: "middle",
+  //   tickSize: 0,
+  //   tickValues: 2,
+  //   tickPadding: 4,
+  // };
 
-  const axisLeft: AxisProps = {
-    legend: "Temperature",
-    legendOffset: -32,
-    legendPosition: "middle",
-    tickSize: 0,
-    tickValues: 2,
-    tickPadding: 4,
-  };
-
-  const toolTipElement = (props: PointTooltipProps) => {
-    return <div className={classes.toolTip}>{props.point.data.y} °C</div>;
-  };
+  // const toolTipelement = (props: PointTooltipProps) => {
+  //   return <div className={classes.toolTip}>{`${props.tooltipText}`}</div>;
+  // };
 
   return (
     <div
@@ -177,14 +163,50 @@ const SensorChart: React.FunctionComponent<PlotProps> = (props) => {
         enableGridX={hover}
         margin={margin}
         yScale={yScale()}
-        xScale={xScale}
-        axisBottom={axisBottom}
-        axisLeft={axisLeft}
+        xScale={{ type: "point" }}
+        axisBottom={{
+          orient: "bottom",
+          tickSize: 5,
+          tickPadding: 5,
+          tickRotation: 90,
+          format: (values) => `${getRequiredDateFormat(values, "MMMM-DD")}`,
+          legendOffset: 36,
+          legendPosition: "middle",
+        }}
+        axisLeft={{
+          orient: "left",
+          tickSize: 5,
+          tickPadding: 5,
+          tickRotation: 0,
+          legendOffset: -40,
+        }}
         lineWidth={1}
-        pointSize={0}
+        // pointSize={0}
         useMesh={true}
         crosshairType="cross"
-        tooltip={toolTipElement}
+        tooltip={({ point }) => {
+          console.log("point", point);
+          return (
+            <div
+              style={{
+                background: "white",
+                padding: "9px 12px",
+                border: "1px solid #ccc",
+              }}
+            >
+              <div>date: {getRequiredDateFormat(point.data.x, "MMMM-DD")}</div>
+              <div
+                key={point.id}
+                style={{
+                  color: point.serieColor,
+                  padding: "3px 0",
+                }}
+              >
+                <strong>{point.serieId}</strong>: {point.data.yFormatted}
+              </div>
+            </div>
+          );
+        }}
       />
     </div>
   );
