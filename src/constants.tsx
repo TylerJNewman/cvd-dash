@@ -11,7 +11,7 @@ export const FIELDS = {
 export const STATES = ["AZ", "CA", "FL", "TX", "NY", "NJ"];
 
 export const RANGES = [
-  { name: "Last Ten Days", value: -10 },
-  { name: "Last Three Months", value: -1 * 30 * 3 },
-  { name: "All Months", value: null },
+  { name: "Last Ten Days", value: -10, ticks: "day" },
+  { name: "Last Three Months", value: -1 * 30 * 3, ticks: "month" },
+  { name: "All Months", value: null, ticks: "month" },
 ];

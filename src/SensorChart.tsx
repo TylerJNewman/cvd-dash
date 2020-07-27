@@ -11,8 +11,26 @@ import {
 import { Scale } from "@nivo/scales";
 import { getStdDeviation } from "./Utils";
 
-const getRequiredDateFormat = (timeStamp, format = "MM-DD-YYYY") => {
-  return moment(timeStamp).format(format);
+const formatDateString = (date) => {
+  const dateString = date.toString();
+  const formatedDateString = [
+    dateString.slice(0, 4),
+    dateString.slice(4, 6),
+    dateString.slice(6),
+  ].join("-");
+  return formatedDateString;
+};
+
+const getRequiredDateFormat = (date, format = "MM-DD-YYYY") => {
+  const dateString = formatDateString(date);
+  return moment(dateString).format(format);
+};
+
+const formatDate = (date, tickSetting) => {
+  const dateString = formatDateString(date);
+  if (tickSetting === "days") return getRequiredDateFormat(date, "MMM-DD");
+  const formattedDateString = getRequiredDateFormat(date, "MMMM");
+  return dateString.slice(-2) === "01" ? formattedDateString : "";
 };
 
 const styles = (theme: Theme) =>
@@ -54,7 +72,7 @@ interface PlotProps extends WithStyles<typeof styles> {
 }
 
 const SensorChart: React.FunctionComponent<PlotProps> = (props) => {
-  const { classes, legend, stateCode, id } = props;
+  const { classes, legend, stateCode, tickSetting } = props;
   const theme = useTheme();
   const [hover, setHover] = useState<boolean>(false);
   const [series, setSeries] = useState<Serie[]>([]);
@@ -131,8 +149,8 @@ const SensorChart: React.FunctionComponent<PlotProps> = (props) => {
   let margin = {
     top: 30,
     right: 10,
-    bottom: 50,
-    left: 40,
+    bottom: 60,
+    left: 50,
   };
 
   return (
@@ -158,8 +176,9 @@ const SensorChart: React.FunctionComponent<PlotProps> = (props) => {
           tickSize: 5,
           tickPadding: 5,
           tickRotation: 90,
-          format: (values) => `${getRequiredDateFormat(values, "MMMM-DD")}`,
-          legendOffset: -260,
+          format: (values) => formatDate(values, tickSetting),
+          // format: (values) => format(values),
+          legendOffset: -250,
           legend: `${legend} - ${stateCode}`,
           legendPosition: "start",
         }}
@@ -179,7 +198,7 @@ const SensorChart: React.FunctionComponent<PlotProps> = (props) => {
           return (
             <div className={classes.toolTip}>
               <div style={{ textAlign: "center" }}>
-                {getRequiredDateFormat(point.data.x, "MMMM-DD")}
+                {getRequiredDateFormat(point.data.x, "MMM-DD")}
               </div>
               <div
                 key={point.id}
