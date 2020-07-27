@@ -40,7 +40,8 @@ export const formatDate = (date: string, tickSetting: string) => {
   return dateString.slice(-2) === "01" ? formattedDateString : "";
 };
 
-export const fetcher = (...args) => fetch(...args).then((res) => res.json());
+export const fetcher = (...args: any) =>
+  fetch(...args).then((res: any) => res.json());
 
 export const getTickSetting = (range: number) =>
   Math.abs(range) === 10 ? "days" : "months";

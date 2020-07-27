@@ -15,7 +15,8 @@
     "next": "9.4.4",
     "react": "16.13.1",
     "react-dom": "16.13.1",
-    "swr": "^0.2.3"
+    "swr": "^0.2.3",
+    "whatwg-fetch": "^3.2.0"
   },
   "devDependencies": {
     "@types/node": "^14.0.26",
