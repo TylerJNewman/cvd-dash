@@ -54,7 +54,7 @@ interface PlotProps extends WithStyles<typeof styles> {
 }
 
 const SensorChart: React.FunctionComponent<PlotProps> = (props) => {
-  const { classes, legend, stateCode } = props;
+  const { classes, legend, stateCode, id } = props;
   const theme = useTheme();
   const [hover, setHover] = useState<boolean>(false);
   const [series, setSeries] = useState<Serie[]>([]);
@@ -108,7 +108,7 @@ const SensorChart: React.FunctionComponent<PlotProps> = (props) => {
   useEffect(() => {
     setSeries([
       {
-        id: "deaths",
+        id: legend,
         data: props.data,
       },
     ]);
@@ -161,7 +161,7 @@ const SensorChart: React.FunctionComponent<PlotProps> = (props) => {
           format: (values) => `${getRequiredDateFormat(values, "MMMM-DD")}`,
           legendOffset: -260,
           legend: `${legend} - ${stateCode}`,
-          legendPosition: "left",
+          legendPosition: "start",
         }}
         axisLeft={{
           orient: "left",
@@ -176,7 +176,6 @@ const SensorChart: React.FunctionComponent<PlotProps> = (props) => {
         crosshairType="cross"
         // enableCrosshair={false}
         tooltip={({ point }) => {
-          console.log("point", point);
           return (
             <div className={classes.toolTip}>
               <div style={{ textAlign: "center" }}>
