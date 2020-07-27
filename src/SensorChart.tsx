@@ -1,6 +1,5 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { PointTooltipProps, ResponsiveLine, Serie } from "@nivo/line";
-import moment from "moment";
 import {
   Theme,
   withStyles,
@@ -9,29 +8,7 @@ import {
   useTheme,
 } from "@material-ui/core";
 import { Scale } from "@nivo/scales";
-import { getStdDeviation } from "./Utils";
-
-const formatDateString = (date) => {
-  const dateString = date.toString();
-  const formatedDateString = [
-    dateString.slice(0, 4),
-    dateString.slice(4, 6),
-    dateString.slice(6),
-  ].join("-");
-  return formatedDateString;
-};
-
-const getRequiredDateFormat = (date, format = "MM-DD-YYYY") => {
-  const dateString = formatDateString(date);
-  return moment(dateString).format(format);
-};
-
-const formatDate = (date, tickSetting) => {
-  const dateString = formatDateString(date);
-  if (tickSetting === "days") return getRequiredDateFormat(date, "MMM-DD");
-  const formattedDateString = getRequiredDateFormat(date, "MMMM");
-  return dateString.slice(-2) === "01" ? formattedDateString : "";
-};
+import { getStdDeviation, formatDate, getRequiredDateFormat } from "./Utils";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -63,12 +40,15 @@ const styles = (theme: Theme) =>
   });
 
 interface SensorReading {
-  value: number;
-  time: number;
+  x: number;
+  y: number;
 }
 
 interface PlotProps extends WithStyles<typeof styles> {
   data: SensorReading[];
+  legend: string;
+  stateCode: string;
+  tickSetting: string;
 }
 
 const SensorChart: React.FunctionComponent<PlotProps> = (props) => {
@@ -190,11 +170,9 @@ const SensorChart: React.FunctionComponent<PlotProps> = (props) => {
           legendOffset: -40,
         }}
         lineWidth={1}
-        // pointSize={0}
         useMesh={true}
         crosshairType="cross"
-        // enableCrosshair={false}
-        tooltip={({ point }) => {
+        tooltip={({ point }: PointTooltipProps) => {
           return (
             <div className={classes.toolTip}>
               <div style={{ textAlign: "center" }}>

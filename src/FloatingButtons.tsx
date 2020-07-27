@@ -17,11 +17,11 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 type Props = {
-  setStateCode: () => void;
-  setRange: () => void;
+  handleStateCode: (code: string) => void;
+  handleRange: (range: number) => void;
 };
 
-const FloatingButtons: React.FC<Props> = ({ setStateCode, setRange }) => {
+const FloatingButtons: React.FC<Props> = ({ handleStateCode, handleRange }) => {
   const classes = useStyles();
   return (
     <>
@@ -30,7 +30,7 @@ const FloatingButtons: React.FC<Props> = ({ setStateCode, setRange }) => {
           <FloatingButton
             key={stateCode}
             name={stateCode}
-            onClick={() => setStateCode(stateCode)}
+            onClick={() => handleStateCode(stateCode)}
           />
         ))}
       </div>
@@ -39,7 +39,7 @@ const FloatingButtons: React.FC<Props> = ({ setStateCode, setRange }) => {
           <FloatingButton
             key={name}
             name={name}
-            onClick={() => setRange(value)}
+            onClick={() => handleRange(value)}
           />
         ))}
       </div>

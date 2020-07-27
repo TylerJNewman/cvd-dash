@@ -5,8 +5,7 @@ import theme from "../src/theme";
 import useSWR from "swr";
 import { FIELDS } from "../src/constants";
 import FloatingButtons from "../src/FloatingButtons";
-
-const fetcher = (...args) => fetch(...args).then((res) => res.json());
+import { fetcher, getTickSetting } from "../src/utils";
 
 const styles = createStyles({
   root: {
@@ -19,11 +18,9 @@ const styles = createStyles({
   },
 });
 
-const getTickSetting = (range) => (Math.abs(range) === 10 ? "days" : "months");
-
 const Index: React.FunctionComponent<WithStyles<typeof styles>> = (props) => {
-  const [stateCode, setStateCode] = useState("CA");
-  const [range, setRange] = useState(-10);
+  const [stateCode, setStateCode] = useState<string>("CA");
+  const [range, setRange] = useState<number>(-10);
   const tickSetting = getTickSetting(range);
 
   const url = "https://covidtracking.com/api/v1/states/daily.json";
@@ -40,7 +37,10 @@ const Index: React.FunctionComponent<WithStyles<typeof styles>> = (props) => {
 
   return (
     <div className={props.classes.root}>
-      <FloatingButtons setStateCode={setStateCode} setRange={setRange} />
+      <FloatingButtons
+        handleStateCode={(code) => setStateCode(code)}
+        handleRange={(range) => setRange(range)}
+      />
       {Object.keys(FIELDS).map((chartTitle: string) => (
         <Box component="div" m={4} key={chartTitle}>
           <SensorChart
