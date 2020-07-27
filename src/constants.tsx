@@ -1,7 +1,7 @@
 export const FIELDS = {
   "Total Cases": "positive",
   "Total Deaths": "death",
-  "Total Hospitalized": "hospitalizedCumulative",
+  // "Total Hospitalized": "hospitalizedCumulative",
   "Daily Cases": "positiveIncrease",
   "Daily Deaths": "deathIncrease",
   // "Ventilator Cases": "onVentilatorCumulative",

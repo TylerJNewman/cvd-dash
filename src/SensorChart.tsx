@@ -8,7 +8,7 @@ import {
   useTheme,
 } from "@material-ui/core";
 import { Scale } from "@nivo/scales";
-import { getStdDeviation, formatDate, getRequiredDateFormat } from "./Utils";
+import { getStdDeviation, formatDate, getRequiredDateFormat } from "./utils";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -130,7 +130,7 @@ const SensorChart: React.FunctionComponent<PlotProps> = (props) => {
     top: 30,
     right: 10,
     bottom: 60,
-    left: 50,
+    left: 55,
   };
 
   return (
@@ -168,6 +168,7 @@ const SensorChart: React.FunctionComponent<PlotProps> = (props) => {
           tickPadding: 5,
           tickRotation: 0,
           legendOffset: -40,
+          format: (number) => new Intl.NumberFormat("en-US").format(number),
         }}
         lineWidth={1}
         useMesh={true}
@@ -176,7 +177,7 @@ const SensorChart: React.FunctionComponent<PlotProps> = (props) => {
           return (
             <div className={classes.toolTip}>
               <div style={{ textAlign: "center" }}>
-                {getRequiredDateFormat(point.data.x, "MMM-DD")}
+                {getRequiredDateFormat(point.data.x, "MMMM DD")}
               </div>
               <div
                 key={point.id}
@@ -185,7 +186,8 @@ const SensorChart: React.FunctionComponent<PlotProps> = (props) => {
                   padding: "3px 0",
                 }}
               >
-                <strong>{point.serieId}</strong>: {point.data.yFormatted}
+                <strong>{point.serieId}</strong>:{" "}
+                {new Intl.NumberFormat("en-US").format(point.data.yFormatted)}
               </div>
             </div>
           );
